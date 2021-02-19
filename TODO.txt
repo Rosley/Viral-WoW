@@ -1,0 +1,4 @@
+Find a way to discriminate commands by security level (RBAC.h might be the key)
+Change command names to more ArcEmu style
+Add in commands from the old core
+Modify .nameannounce to show GM level
