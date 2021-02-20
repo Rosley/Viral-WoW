@@ -66,10 +66,10 @@ public:
             { "near",           HandleGameObjectNearCommand,      rbac::RBAC_PERM_COMMAND_GOBJECT_NEAR,           Console::No },
             { "target",         HandleGameObjectTargetCommand,    rbac::RBAC_PERM_COMMAND_GOBJECT_TARGET,         Console::No },
             { "turn",           HandleGameObjectTurnCommand,      rbac::RBAC_PERM_COMMAND_GOBJECT_TURN,           Console::No },
-            { "spawngroup",     HandleNpcSpawnGroup,              rbac::RBAC_PERM_COMMAND_GOBJECT_SPAWNGROUP,     Console::No },
-            { "despawngroup",   HandleNpcDespawnGroup,            rbac::RBAC_PERM_COMMAND_GOBJECT_DESPAWNGROUP,   Console::No },
-            { "add temp",       HandleGameObjectAddTempCommand,   rbac::RBAC_PERM_COMMAND_GOBJECT_ADD_TEMP,       Console::No },
-            { "add",            HandleGameObjectAddCommand,       rbac::RBAC_PERM_COMMAND_GOBJECT_ADD,            Console::No },
+            { "spgroup",        HandleNpcSpawnGroup,              rbac::RBAC_PERM_COMMAND_GOBJECT_SPAWNGROUP,     Console::No },
+            { "despgroup",      HandleNpcDespawnGroup,            rbac::RBAC_PERM_COMMAND_GOBJECT_DESPAWNGROUP,   Console::No },
+            { "spawn",          HandleGameObjectTempSpawnCommand, rbac::RBAC_PERM_COMMAND_GOBJECT_ADD_TEMP,       Console::No },
+            { "permspawn",      HandleGameObjectPermSpawnCommand, rbac::RBAC_PERM_COMMAND_GOBJECT_ADD,            Console::No },
             { "set phase",      HandleGameObjectSetPhaseCommand,  rbac::RBAC_PERM_COMMAND_GOBJECT_SET_PHASE,      Console::No },
             { "set state",      HandleGameObjectSetStateCommand,  rbac::RBAC_PERM_COMMAND_GOBJECT_SET_STATE,      Console::No },
         };
@@ -102,7 +102,7 @@ public:
     }
 
     //spawn go
-    static bool HandleGameObjectAddCommand(ChatHandler* handler, GameObjectEntry objectId, Optional<int32> spawnTimeSecs)
+    static bool HandleGameObjectPermSpawnCommand(ChatHandler* handler, GameObjectEntry objectId, Optional<int32> spawnTimeSecs)
     {
         if (!objectId)
             return false;
@@ -164,7 +164,7 @@ public:
     }
 
     // add go, temp only
-    static bool HandleGameObjectAddTempCommand(ChatHandler* handler, GameObjectEntry objectId, Optional<uint64> spawntime)
+    static bool HandleGameObjectTempSpawnCommand(ChatHandler* handler, GameObjectEntry objectId, Optional<uint64> spawntime)
     {
         Player* player = handler->GetSession()->GetPlayer();
         Seconds spawntm(spawntime.value_or(300));

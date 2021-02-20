@@ -23,15 +23,21 @@ Category: commandscripts
 EndScriptData */
 
 #include "ScriptMgr.h"
+#include "AccountMgr.h"
+#include "CharacterCache.h"
 #include "Chat.h"
+#include "DatabaseEnv.h"
 #include "DBCStores.h"
 #include "Log.h"
+#include "ObjectAccessor.h"
 #include "ObjectMgr.h"
 #include "Opcodes.h"
 #include "Pet.h"
 #include "Player.h"
+#include "PlayerDump.h"
 #include "RBAC.h"
 #include "ReputationMgr.h"
+#include "World.h"
 #include "WorldSession.h"
 
 #if TRINITY_COMPILER == TRINITY_COMPILER_GNU
@@ -58,12 +64,14 @@ public:
         {
             { "arenapoints",  rbac::RBAC_PERM_COMMAND_MODIFY_ARENAPOINTS,  false, &HandleModifyArenaCommand,         "" },
             { "bit",          rbac::RBAC_PERM_COMMAND_MODIFY_BIT,          false, &HandleModifyBitCommand,           "" },
+            { "displayid",    rbac::RBAC_PERM_COMMAND_MORPH,               false, &HandleModifyDisplayIDCommand,          "" },
             { "drunk",        rbac::RBAC_PERM_COMMAND_MODIFY_DRUNK,        false, &HandleModifyDrunkCommand,         "" },
             { "energy",       rbac::RBAC_PERM_COMMAND_MODIFY_ENERGY,       false, &HandleModifyEnergyCommand,        "" },
             { "faction",      rbac::RBAC_PERM_COMMAND_MODIFY_FACTION,      false, &HandleModifyFactionCommand,       "" },
             { "gender",       rbac::RBAC_PERM_COMMAND_MODIFY_GENDER,       false, &HandleModifyGenderCommand,        "" },
             { "honor",        rbac::RBAC_PERM_COMMAND_MODIFY_HONOR,        false, &HandleModifyHonorCommand,         "" },
             { "hp",           rbac::RBAC_PERM_COMMAND_MODIFY_HP,           false, &HandleModifyHPCommand,            "" },
+            { "level",        rbac::RBAC_PERM_COMMAND_CHARACTER_LEVEL,     false, &HandleModifyLevelCommand,         "" },
             { "mana",         rbac::RBAC_PERM_COMMAND_MODIFY_MANA,         false, &HandleModifyManaCommand,          "" },
             { "money",        rbac::RBAC_PERM_COMMAND_MODIFY_MONEY,        false, &HandleModifyMoneyCommand,         "" },
             { "mount",        rbac::RBAC_PERM_COMMAND_MODIFY_MOUNT,        false, &HandleModifyMountCommand,         "" },
@@ -80,7 +88,6 @@ public:
         };
         static std::vector<ChatCommand> commandTable =
         {
-            { "morph",   rbac::RBAC_PERM_COMMAND_MORPH,   false, &HandleModifyMorphCommand,          "" },
             { "demorph", rbac::RBAC_PERM_COMMAND_DEMORPH, false, &HandleDeMorphCommand,              "" },
             { "modify",  rbac::RBAC_PERM_COMMAND_MODIFY,  false, nullptr,                 "", modifyCommandTable },
         };
@@ -139,6 +146,53 @@ public:
             return true;
         }
         return false;
+    }
+
+    static bool HandleModifyLevelCommand(ChatHandler* handler, Optional<Trinity::ChatCommands::PlayerIdentifier> player, int16 level)
+    {
+        if (!player)
+            player = Trinity::ChatCommands::PlayerIdentifier::FromTargetOrSelf(handler);
+        if (!player)
+            return false;
+
+        uint8 oldlevel = static_cast<uint8>(player->IsConnected() ? player->GetConnectedPlayer()->GetLevel() : sCharacterCache->GetCharacterLevelByGuid(*player));
+        int16 newlevel = static_cast<int16>(oldlevel) + level;
+
+        if (newlevel < 1)
+            newlevel = 1;
+
+        if (newlevel > static_cast<int16>(STRONG_MAX_LEVEL))
+            newlevel = static_cast<int16>(STRONG_MAX_LEVEL);
+
+        if (Player* target = player->GetConnectedPlayer())
+        {
+            target->GiveLevel(static_cast<uint8>(newlevel));
+            target->InitTalentForLevel();
+            target->SetXP(0);
+
+            if (handler->needReportToTarget(target))
+            {
+                if (oldlevel == newlevel)
+                    ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_LEVEL_PROGRESS_RESET, handler->GetNameLink().c_str());
+                else if (oldlevel < static_cast<uint8>(newlevel))
+                    ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_LEVEL_UP, handler->GetNameLink().c_str(), newlevel);
+                else                                                // if (oldlevel > newlevel)
+                    ChatHandler(target->GetSession()).PSendSysMessage(LANG_YOURS_LEVEL_DOWN, handler->GetNameLink().c_str(), newlevel);
+            }
+        }
+        else
+        {
+            // Update level and reset XP, everything else will be updated at login
+            CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_LEVEL);
+            stmt->setUInt8(0, static_cast<uint8>(newlevel));
+            stmt->setUInt32(1, player->GetGUID());
+            CharacterDatabase.Execute(stmt);
+        }
+
+        if (!handler->GetSession() || (handler->GetSession()->GetPlayer() != player->GetConnectedPlayer()))      // including chr == NULL
+            handler->PSendSysMessage(LANG_YOU_CHANGE_LVL, handler->playerLink(*player).c_str(), newlevel);
+
+        return true;
     }
 
     //Edit Player Mana
@@ -809,7 +863,7 @@ public:
     }
 
     //morph creature or player
-    static bool HandleModifyMorphCommand(ChatHandler* handler, char const* args)
+    static bool HandleModifyDisplayIDCommand(ChatHandler* handler, char const* args)
     {
         if (!*args)
             return false;

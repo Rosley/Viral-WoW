@@ -48,10 +48,10 @@ public:
         static ChatCommandTable commandTable =
         {
             { "channel set ownership",  HandleChannelSetOwnership,      rbac::RBAC_PERM_COMMAND_CHANNEL_SET_OWNERSHIP,  Console::No },
-            { "nameannounce",           HandleNameAnnounceCommand,      rbac::RBAC_PERM_COMMAND_NAMEANNOUNCE,           Console::Yes },
-            { "gmnameannounce",         HandleGMNameAnnounceCommand,    rbac::RBAC_PERM_COMMAND_GMNAMEANNOUNCE,         Console::Yes },
-            { "announce",               HandleAnnounceCommand,          rbac::RBAC_PERM_COMMAND_ANNOUNCE,               Console::Yes },
-            { "gmannounce",             HandleGMAnnounceCommand,        rbac::RBAC_PERM_COMMAND_GMANNOUNCE,             Console::Yes },
+            { "announce",               HandleNameAnnounceCommand,      rbac::RBAC_PERM_COMMAND_NAMEANNOUNCE,           Console::Yes },
+            { "gmannounce",             HandleGMNameAnnounceCommand,    rbac::RBAC_PERM_COMMAND_GMNAMEANNOUNCE,         Console::Yes },
+            { "serverannounce",         HandleAnnounceCommand,          rbac::RBAC_PERM_COMMAND_ANNOUNCE,               Console::Yes },
+            { "gmserverannounce",       HandleGMAnnounceCommand,        rbac::RBAC_PERM_COMMAND_GMANNOUNCE,             Console::Yes },
             { "notify",                 HandleNotifyCommand,            rbac::RBAC_PERM_COMMAND_NOTIFY,                 Console::Yes },
             { "gmnotify",               HandleGMNotifyCommand,          rbac::RBAC_PERM_COMMAND_GMNOTIFY,               Console::Yes },
             { "whispers",               HandleWhispersCommand,          rbac::RBAC_PERM_COMMAND_WHISPERS,               Console::No },
