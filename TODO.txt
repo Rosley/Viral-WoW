@@ -1,4 +1,6 @@
-Find a way to discriminate commands by security level (RBAC.h might be the key)
-Change command names to more ArcEmu style
-Add in commands from the old core
-Modify .nameannounce to show GM level
+Change RBAC permissions in DB for specific commands
+Change command names to more ArcEmu style (started, not complete)
+Add .lookup displayid
+Add .disable displayid
+Add .modify announcecolor 
+Modify .announce to show GM level
