@@ -48,7 +48,7 @@ public:
         static ChatCommandTable commandTable =
         {
             { "channel set ownership",  HandleChannelSetOwnership,      rbac::RBAC_PERM_COMMAND_CHANNEL_SET_OWNERSHIP,  Console::No },
-            { "announce",               HandleNameAnnounceCommand,      rbac::RBAC_PERM_COMMAND_NAMEANNOUNCE,           Console::Yes },
+            { "nameannounce",           HandleNameAnnounceCommand,      rbac::RBAC_PERM_COMMAND_NAMEANNOUNCE,           Console::Yes },
             { "gmannounce",             HandleGMNameAnnounceCommand,    rbac::RBAC_PERM_COMMAND_GMNAMEANNOUNCE,         Console::Yes },
             { "serverannounce",         HandleAnnounceCommand,          rbac::RBAC_PERM_COMMAND_ANNOUNCE,               Console::Yes },
             { "gmserverannounce",       HandleGMAnnounceCommand,        rbac::RBAC_PERM_COMMAND_GMANNOUNCE,             Console::Yes },

@@ -2,5 +2,5 @@ Change RBAC permissions in DB for specific commands
 Change command names to more ArcEmu style (started, not complete)
 Add .lookup displayid
 Add .disable displayid
-Add .modify announcecolor 
-Modify .announce to show GM level
+Add .modify announcecolor (might require scripts from alt's core)
+Add .toggle commands
