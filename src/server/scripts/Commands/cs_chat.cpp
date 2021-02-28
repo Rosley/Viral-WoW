@@ -50,31 +50,31 @@ public:
 			// Player
 		case SEC_PLAYER:
 			msg += "|c1f40af20[Viral-WoW] |cffffff00<Player> ";
-			msg += GetNameLink(player);
+			msg +=  player->GetName();
 			msg += " |c1f40af20announces:|cffffff00 ";
 			break;
 			// Subscriber
 		case SEC_MODERATOR:
 			msg += "|c1f40af20[Viral-WoW] |cffff6060<Subscriber> ";
-			msg += GetNameLink(player);
+			msg += player->GetName();
 			msg += " |c1f40af20announces:|cffffff00 ";
 			break;
 			// Moderator
 		case SEC_GAMEMASTER:
 			msg += "|c1f40af20[Viral-WoW] |cff71C671<Moderator> ";
-			msg += GetNameLink(player);
+			msg += player->GetName();
 			msg += " |c1f40af20announces:|cffffff00 ";
 			break;
 			// Developer
 		case SEC_ADMINISTRATOR:
 			msg += "|c1f40af20[Viral-WoW] |cffDA70D6<Developer> ";
-			msg += GetNameLink(player);
+			msg += player->GetName();
 			msg += " |c1f40af20announces:|cffffff00 ";
 			break;
 			// Administrator
 		case SEC_CONSOLE:
 			msg += "|c1f40af20[Viral-WoW] |cff00ffff<Administrator> ";
-			msg += GetNameLink(player);
+			msg += player->GetName();
 			msg += " |c1f40af20announces:|cffffff00 ";
 			break;
 
