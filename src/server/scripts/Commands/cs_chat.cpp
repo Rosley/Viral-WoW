@@ -11,48 +11,6 @@
 #include "World.h"
 #include "WorldSession.h"
 
-#define FACTION_SPECIFIC 0
-
-std::string GetNameLink(Player* player)
-{
-	std::string name = player->GetName();
-	std::string color;
-	switch (player->GetClass())
-	{
-	case CLASS_DEATH_KNIGHT:
-		color = "|cffff0000";
-		break;
-	case CLASS_DRUID:
-		color = "|cffff0000";
-		break;
-	case CLASS_HUNTER:
-		color = "|cffff0000";
-		break;
-	case CLASS_MAGE:
-		color = "|cffff0000";
-		break;
-	case CLASS_PALADIN:
-		color = "|cffff0000";
-		break;
-	case CLASS_PRIEST:
-		color = "|cffff0000";
-		break;
-	case CLASS_ROGUE:
-		color = "|cffff0000";
-		break;
-	case CLASS_SHAMAN:
-		color = "|cffff0000";
-		break;
-	case CLASS_WARLOCK:
-		color = "|cffff0000";
-		break;
-	case CLASS_WARRIOR:
-		color = "|cffff0000";
-		break;
-	}
-	return "|Hplayer:" + name + "|h|cffFFFFFF[" + color + name + "|cffFFFFFF]|h|r";
-}
-
 using namespace Trinity::ChatCommands;
 
 class cs_world_chat : public CommandScript
@@ -67,12 +25,17 @@ public:
             { "announce",           HandleWorldChatCommand,      rbac::RBAC_PERM_COMMAND_WORLD_CHAT,           Console::Yes },
 		};
 
+        static ChatCommandTable commandTable =
+        {
+            { "announce", WorldChatCommandTable },
+        };
+
 		return WorldChatCommandTable;
 	}
 
 	static bool HandleWorldChatCommand(ChatHandler* handler, const char* args)
 	{
-		if (!handler->GetSession()->GetPlayer()->CanSpeak())
+		if (!handler->GetSession()->CanSpeak())
 			return false;
 		std::string temp = args;
 

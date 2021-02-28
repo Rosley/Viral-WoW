@@ -3,4 +3,5 @@ Change command names to more ArcEmu style (started, not complete)
 Add .lookup displayid
 Add .disable displayid
 Add .modify announcecolor (might require scripts from alt's core)
-Add .toggle commands
+Add .toggle commands 
+Modify .announce to show GM level (try #2)
